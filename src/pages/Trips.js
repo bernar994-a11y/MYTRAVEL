@@ -229,6 +229,8 @@ function _openTripModal(trip = null) {
 
   document.getElementById('trip-modal-cancel')?.addEventListener('click', () => modal.close());
   document.getElementById('trip-modal-save')?.addEventListener('click', async () => {
+    console.group('📝 [Frontend] Validação do Formulário de Viagem');
+    
     const name = document.getElementById('trip-name')?.value?.trim();
     const destination = document.getElementById('trip-destination')?.value?.trim();
     const start_date = document.getElementById('trip-start')?.value;
@@ -237,24 +239,61 @@ function _openTripModal(trip = null) {
     const currency = document.getElementById('trip-currency')?.value;
     const notes = document.getElementById('trip-notes')?.value?.trim();
 
-    if (!name) { toast.warning('Informe o nome da viagem'); return; }
-    if (!start_date || !end_date) { toast.warning('Informe as datas'); return; }
-    if (new Date(end_date) < new Date(start_date)) { toast.warning('A data de volta deve ser após a ida'); return; }
+    // Validations
+    if (!name) { 
+      toast.error('O nome da viagem é obrigatório'); 
+      console.warn('Falha: Nome ausente');
+      console.groupEnd();
+      return; 
+    }
+    if (!start_date) { 
+      toast.error('A data de ida é obrigatória'); 
+      console.warn('Falha: Data de ida ausente');
+      console.groupEnd();
+      return; 
+    }
+    if (!end_date) { 
+      toast.error('A data de volta é obrigatória'); 
+      console.warn('Falha: Data de volta ausente');
+      console.groupEnd();
+      return; 
+    }
 
-    const data = { name, destination, start_date, end_date, budget: Number(budget) || 0, currency, notes };
+    const startDateObj = new Date(start_date);
+    const endDateObj = new Date(end_date);
+    
+    if (endDateObj < startDateObj) { 
+      toast.error('A data de volta não pode ser anterior à data de ida'); 
+      console.warn('Falha: Cronologia inválida');
+      console.groupEnd();
+      return; 
+    }
+
+    const data = { 
+      name, 
+      destination, 
+      start_date, 
+      end_date, 
+      budget: Number(budget) || 0, 
+      currency, 
+      notes 
+    };
+
+    console.log('Dados validados para envio:', data);
+    console.groupEnd();
 
     try {
       if (isEdit) {
-        // storage.updateTrip(trip.id, data); // Legacy logic
         toast.info('Para editar viagens compartilhadas, use as permissões de owner.');
       } else {
         await dataService.createTrip(data);
-        toast.success('Viagem criada!');
+        toast.success('Viagem criada com sucesso!');
       }
       modal.close();
       renderTrips();
     } catch (err) {
-      toast.error('Erro ao salvar viagem');
+      console.error('❌ [Frontend] Erro capturado no salvamento:', err);
+      toast.error(err.message || 'Erro crítico ao salvar viagem');
     }
   });
 }
