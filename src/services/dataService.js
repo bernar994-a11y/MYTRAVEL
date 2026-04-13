@@ -98,6 +98,18 @@ class DataService {
     return trip.id;
   }
 
+  async updateTrip(id, tripData) {
+    const { data, error } = await supabase
+      .from('trips')
+      .update(tripData)
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  }
+
   /**
    * ---- Itinerary (Activities) ----
    */
@@ -276,6 +288,58 @@ class DataService {
   }
 
   /**
+   * ---- Reservations ----
+   */
+
+  async getReservations(tripId) {
+    const { data, error } = await supabase
+      .from('reservations')
+      .select(`
+        *,
+        user:profiles(*)
+      `)
+      .eq('trip_id', tripId)
+      .order('start_date', { ascending: true });
+
+    if (error) return [];
+    return data;
+  }
+
+  async createReservation(resData) {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) await this._ensureProfile(user);
+
+    const { data, error } = await supabase
+      .from('reservations')
+      .insert({
+        ...resData,
+        user_id: user?.id
+      })
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  }
+
+  async updateReservation(id, resData) {
+    const { data, error } = await supabase
+      .from('reservations')
+      .update(resData)
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  }
+
+  async deleteReservation(id) {
+    const { error } = await supabase.from('reservations').delete().eq('id', id);
+    if (error) throw error;
+  }
+
+  /**
    * ---- Realtime Helpers ----
    */
 
@@ -284,6 +348,7 @@ class DataService {
       .channel(`trip-${tripId}`)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'activities', filter: `trip_id=eq.${tripId}` }, callback)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'flights', filter: `trip_id=eq.${tripId}` }, callback)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'reservations', filter: `trip_id=eq.${tripId}` }, callback)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'trip_participants', filter: `trip_id=eq.${tripId}` }, callback)
       .subscribe();
   }

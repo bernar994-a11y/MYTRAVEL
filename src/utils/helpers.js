@@ -94,16 +94,33 @@ export function daysBetween(startDate, endDate) {
 }
 
 /**
- * Get trip status based on dates
+ * Get trip status based on dates and manual overrides
  */
-export function getTripStatus(startDate, endDate) {
+export function getTripStatus(tripOrStartDate, endDate = null) {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  const start = new Date(startDate + 'T00:00:00');
-  const end = new Date(endDate + 'T00:00:00');
 
-  if (today < start) return 'planning';
+  let start_date, end_date, manual_status;
+
+  if (typeof tripOrStartDate === 'object' && tripOrStartDate !== null) {
+    start_date = tripOrStartDate.start_date;
+    end_date = tripOrStartDate.end_date;
+    manual_status = tripOrStartDate.manual_status;
+  } else {
+    start_date = tripOrStartDate;
+    end_date = endDate;
+  }
+
+  const start = new Date(start_date + 'T00:00:00');
+  const end = new Date(end_date + 'T00:00:00');
+
+  // Automatic "Completed" status always wins if date is past
   if (today > end) return 'completed';
+  
+  // Manual override for "Confirmed"
+  if (manual_status === 'confirmed') return 'confirmed';
+  
+  if (today < start) return 'planning';
   return 'active';
 }
 

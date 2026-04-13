@@ -70,7 +70,7 @@ export async function renderTrips() {
       ${filtered.length > 0 ? `
         <div class="grid-cards stagger-children">
           ${filtered.map(trip => {
-            const status = getTripStatus(trip.start_date, trip.end_date);
+            const status = getTripStatus(trip);
             // Budget/Spent from Supabase (to be implemented fully in Finances)
             const budget = Number(trip.budget) || 0;
             const days = daysUntil(trip.start_date);
@@ -106,9 +106,11 @@ export async function renderTrips() {
                 </div>
                 <div class="trip-card-footer">
                   <div class="trip-card-meta">
-                    <div class="participant-avatars" style="display:flex; margin-left:4px">
-                      <!-- Avatars could be loaded here -->
-                    </div>
+                    ${status === 'planning' ? `
+                      <button class="btn btn-primary btn-sm btn-confirm-trip" data-id="${trip.id}" style="font-size:10px; padding:4px 10px">
+                        Confirmar Viagem
+                      </button>
+                    ` : ''}
                   </div>
                   <div class="trip-card-actions">
                     <button class="btn btn-ghost btn-icon btn-sm edit-trip-btn" data-id="${trip.id}" title="Editar">
@@ -137,6 +139,19 @@ export async function renderTrips() {
   // Events
   document.getElementById('btn-new-trip')?.addEventListener('click', () => _openTripModal());
   document.getElementById('btn-new-trip-empty')?.addEventListener('click', () => _openTripModal());
+
+  document.querySelectorAll('.btn-confirm-trip').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      try {
+        await dataService.updateTrip(btn.dataset.id, { manual_status: 'confirmed' });
+        toast.success('Viagem confirmada!');
+        renderTrips();
+      } catch (err) {
+        toast.error('Erro ao confirmar viagem');
+      }
+    });
+  });
 
   document.querySelectorAll('.filter-chip[data-filter]').forEach(el => {
     el.addEventListener('click', () => {
