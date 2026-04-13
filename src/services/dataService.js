@@ -22,7 +22,7 @@ class DataService {
       .order('start_date', { ascending: true });
 
     if (error) {
-      console.error('Error fetching trips:', error);
+      console.error('DataService: Erro ao carregar viagens:', error.message || error);
       return [];
     }
     return data;
@@ -42,7 +42,7 @@ class DataService {
       .single();
 
     if (error) {
-      console.error('Error fetching trip:', error);
+      console.warn('DataService: Could not fetch trip:', error.message);
       return null;
     }
     return data;
@@ -102,6 +102,71 @@ class DataService {
    * ---- Itinerary (Activities) ----
    */
 
+  async _ensureProfile(user) {
+    if (!user) return;
+    
+    try {
+      // Check if profile exists
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('id', user.id)
+        .single();
+
+      if (!profile) {
+        console.log('DataService: Creating missing profile for', user.email);
+        const { error } = await supabase.from('profiles').upsert({
+          id: user.id,
+          email: user.email,
+          full_name: user.user_metadata?.full_name || user.email.split('@')[0],
+          avatar_url: `https://ui-avatars.com/api/?name=${encodeURIComponent(user.email)}&background=random`
+        });
+        if (error) console.error('DataService: Profile creation error:', error.message);
+      }
+    } catch (e) {
+      console.error('DataService: Profile check failed:', e);
+    }
+  }
+
+  async createTrip(tripData) {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      throw new Error('Usuário não autenticado. Por favor, faça login novamente.');
+    }
+
+    // 1. Ensure profile exists first
+    await this._ensureProfile(user);
+
+    // 2. Create the trip
+    const { data: trip, error: tripError } = await supabase
+      .from('trips')
+      .insert({
+        ...tripData,
+        owner_id: user.id
+      })
+      .select()
+      .single();
+
+    if (tripError) {
+      console.error('DataService: Create Trip Error:', tripError);
+      throw new Error(`Erro ao criar viagem: ${tripError.message || 'Erro no banco de dados'}${tripError.details ? ` (${tripError.details})` : ''}`);
+    }
+
+    // 3. Add owner as participant
+    const { error: partError } = await supabase.from('trip_participants').insert({
+      trip_id: trip.id,
+      user_id: user.id,
+      role: 'owner'
+    });
+
+    if (partError) {
+      console.warn('DataService: Participant addition failed:', partError.message);
+      // We don't throw here to avoid blocking the user if the trip was already created
+    }
+
+    return trip;
+  }
+
   async getActivities(tripId) {
     const { data, error } = await supabase
       .from('activities')
@@ -119,6 +184,8 @@ class DataService {
 
   async createActivity(activityData) {
     const { data: { user } } = await supabase.auth.getUser();
+    if (user) await this._ensureProfile(user);
+
     const { data, error } = await supabase
       .from('activities')
       .insert({
@@ -169,6 +236,8 @@ class DataService {
 
   async createFlight(flightData) {
     const { data: { user } } = await supabase.auth.getUser();
+    if (user) await this._ensureProfile(user);
+
     const { data, error } = await supabase
       .from('flights')
       .insert({

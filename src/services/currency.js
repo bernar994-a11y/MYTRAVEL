@@ -67,7 +67,7 @@ class CurrencyService {
         return true;
       }
     } catch (e) {
-      console.warn('Failed to fetch exchange rates, using fallback:', e);
+      // Use fallback rates if API is unavailable or restricted
       this.rates = FALLBACK_RATES;
       this.baseCurrency = 'BRL';
     }
