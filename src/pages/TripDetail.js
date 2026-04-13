@@ -11,6 +11,7 @@ import { renderFinances } from './Finances.js';
 import { renderReservations } from './Reservations.js';
 import { renderChecklist } from './Checklist.js';
 import { renderFlights } from './Flights.js';
+import { openShareCard } from '../components/ShareCard.js';
 
 let currentTab = 'itinerary';
 
@@ -27,7 +28,10 @@ export async function renderTripDetail(params) {
     </div>
   `;
 
-  const trip = await dataService.getTrip(tripId);
+  const [trip, activities] = await Promise.all([
+    dataService.getTrip(tripId),
+    dataService.getActivities(tripId)
+  ]);
 
   if (!trip) {
     content.innerHTML = `<div class="empty-state"><h3 class="empty-state-title">Viagem não encontrada</h3><button class="btn btn-primary" onclick="location.hash='/trips'">Voltar</button></div>`;
@@ -56,7 +60,10 @@ export async function renderTripDetail(params) {
             </div>
           </div>
           
-          <div style="display:flex; gap:var(--space-2)">
+          <div style="display:flex; gap:var(--space-2); align-items: center">
+            <button class="btn btn-secondary btn-sm" id="btn-share-visual" title="Gerar card visual do roteiro">
+              ${icon('image', 14)} Compartilhar Visual
+            </button>
             <button class="btn btn-secondary btn-sm" id="btn-share-trip">
               ${icon('users', 14)} Convidar amigos
             </button>
@@ -113,6 +120,10 @@ export async function renderTripDetail(params) {
   // Events
   document.getElementById('trip-back')?.addEventListener('click', () => router.navigate('/trips'));
   
+  document.getElementById('btn-share-visual')?.addEventListener('click', () => {
+    openShareCard(trip, activities);
+  });
+
   document.getElementById('btn-share-trip')?.addEventListener('click', () => {
     const shareLink = `${window.location.origin}/#/trips?join=${trip.share_token}`;
     

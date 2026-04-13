@@ -30,10 +30,23 @@
 
 .trip-card-cover {
   width: 100%;
-  height: 120px;
+  height: 160px;
   background: var(--gradient-primary);
+  background-size: cover;
+  background-position: center;
   position: relative;
   overflow: hidden;
+}
+
+.trip-card-cover::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(180deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0) 40%, rgba(0,0,0,0) 60%, rgba(0,0,0,0.6) 100%);
+  pointer-events: none;
 }
 
 .trip-card-cover-placeholder {

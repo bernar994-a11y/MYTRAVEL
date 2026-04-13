@@ -15,6 +15,7 @@
     "vite-plugin-pwa": "^0.21.0"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.103.0"
+    "@supabase/supabase-js": "^2.103.0",
+    "html2canvas": "^1.4.1"
   }
 }

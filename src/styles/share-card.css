@@ -1,0 +1,182 @@
+/* ==========================================
+   MY TRAVEL — Share Card Styles
+   ========================================== */
+
+.share-card-container {
+  padding: var(--space-4);
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  align-items: center;
+}
+
+/* The actual flyer that will be captured */
+.share-flyer {
+  width: 400px;
+  background: #0f172a;
+  color: #f8fafc;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  position: relative;
+}
+
+.share-flyer-header {
+  height: 200px;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: var(--space-6);
+}
+
+.share-flyer-header::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(0deg, rgba(15, 23, 42, 1) 0%, rgba(15, 23, 42, 0) 100%);
+}
+
+.share-flyer-header-content {
+  position: relative;
+  z-index: 1;
+}
+
+.share-flyer-destination {
+  font-size: 12px;
+  font-weight: 700;
+  color: #38bdf8;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 4px;
+}
+
+.share-flyer-title {
+  font-size: 28px;
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.share-flyer-body {
+  padding: var(--space-6);
+  background: #0f172a;
+}
+
+.share-flyer-dates {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #94a3b8;
+  margin-bottom: var(--space-6);
+  background: rgba(255,255,255,0.05);
+  padding: 8px 12px;
+  border-radius: 12px;
+  width: fit-content;
+}
+
+.share-flyer-itinerary {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.share-flyer-day {
+  display: flex;
+  gap: var(--space-4);
+}
+
+.share-flyer-day-marker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.share-flyer-day-circle {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #38bdf8;
+  box-shadow: 0 0 10px #38bdf8;
+}
+
+.share-flyer-day-line {
+  flex: 1;
+  width: 2px;
+  background: rgba(56, 189, 248, 0.2);
+}
+
+.share-flyer-day-info {
+  flex: 1;
+}
+
+.share-flyer-day-date {
+  font-size: 11px;
+  font-weight: 700;
+  color: #38bdf8;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.share-flyer-activity {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 12px;
+  padding: 10px 12px;
+}
+
+.share-flyer-activity-time {
+  font-size: 10px;
+  font-weight: 600;
+  color: #64748b;
+  margin-bottom: 2px;
+}
+
+.share-flyer-activity-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #f1f2f4;
+}
+
+.share-flyer-footer {
+  padding: var(--space-6);
+  text-align: center;
+  border-top: 1px solid rgba(255,255,255,0.05);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.share-flyer-logo {
+  font-size: 14px;
+  font-weight: 800;
+  background: linear-gradient(90deg, #38bdf8, #818cf8);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.share-flyer-tagline {
+  font-size: 10px;
+  color: #64748b;
+}
+
+.share-actions {
+  display: flex;
+  gap: var(--space-3);
+  width: 100%;
+}
+
+.share-actions .btn {
+  flex: 1;
+}

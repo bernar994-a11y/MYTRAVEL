@@ -77,10 +77,12 @@ export async function renderTrips() {
 
             return `
               <div class="trip-card animate-fade-in-up" data-trip-id="${trip.id}">
-                <div class="trip-card-cover">
-                  <div class="trip-card-cover-placeholder">
-                    ${_getDestinationEmoji(trip.destination)}
-                  </div>
+                <div class="trip-card-cover" style="${trip.image_url ? `background-image: url('${trip.image_url}')` : ''}">
+                  ${!trip.image_url ? `
+                    <div class="trip-card-cover-placeholder">
+                      ${_getDestinationEmoji(trip.destination)}
+                    </div>
+                  ` : ''}
                   <div class="trip-card-status">
                     <span class="badge ${TRIP_STATUS_CLASSES[status]}">${TRIP_STATUS_LABELS[status]}</span>
                   </div>
@@ -210,6 +212,11 @@ function _openTripModal(trip = null) {
       </div>
     </div>
     <div class="form-group">
+      <label class="form-label">URL da Imagem de Capa</label>
+      <input type="url" class="form-input" id="trip-image-url" placeholder="https://images.unsplash.com/..." value="${trip ? escapeHtml(trip.image_url || '') : ''}" />
+      <p style="font-size: 11px; color: var(--text-secondary); margin-top: 4px;">Dica: Use links do Unsplash para fotos profissionais.</p>
+    </div>
+    <div class="form-group">
       <label class="form-label">Notas</label>
       <textarea class="form-textarea" id="trip-notes" placeholder="Anotações sobre a viagem...">${trip ? escapeHtml(trip.notes || '') : ''}</textarea>
     </div>
@@ -238,6 +245,7 @@ function _openTripModal(trip = null) {
     const budget = document.getElementById('trip-budget')?.value;
     const currency = document.getElementById('trip-currency')?.value;
     const notes = document.getElementById('trip-notes')?.value?.trim();
+    const image_url = document.getElementById('trip-image-url')?.value?.trim();
 
     // Validations
     if (!name) { 
@@ -276,7 +284,8 @@ function _openTripModal(trip = null) {
       end_date, 
       budget: Number(budget) || 0, 
       currency, 
-      notes 
+      notes,
+      image_url
     };
 
     console.log('Dados validados para envio:', data);
