@@ -18,6 +18,14 @@ export async function renderReservations(container, tripId) {
     _refreshList(container, tripId);
   });
 
+  // Loading State inicial
+  container.innerHTML = `
+    <div class="animate-fade-in" style="padding: var(--space-20) 0; text-align: center;">
+      <div class="spinner" style="margin: 0 auto; width: 32px; height: 32px; border: 3px solid var(--border-primary); border-top-color: var(--primary-500); border-radius: 50%; animation: spin 1s linear infinite;"></div>
+      <p style="margin-top: var(--space-4); color: var(--text-secondary); font-size: 14px;">Carregando reservas...</p>
+    </div>
+  `;
+
   await _refreshList(container, tripId);
 }
 

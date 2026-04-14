@@ -62,7 +62,7 @@ export async function renderTripDetail(params) {
           
           <div style="display:flex; gap:var(--space-2); align-items: center">
             <button class="btn btn-secondary btn-sm" id="btn-share-visual" title="Gerar card visual do roteiro">
-              ${icon('image', 14)} Compartilhar Visual
+              ${icon('share', 14)} Compartilhar Itinerário
             </button>
             <button class="btn btn-secondary btn-sm" id="btn-share-trip">
               ${icon('users', 14)} Convidar amigos

@@ -58,32 +58,32 @@ export function renderDashboard() {
       </div>
 
       <!-- Stats Grid -->
-      <div class="card grid-stats stagger-children">
-        <div class="stat-card">
-          <div class="stat-card-header">
-            <span class="stat-card-label">Total de Viagens</span>
-            <div class="stat-card-icon primary">${icon('map', 20)}</div>
+      <div class="card grid-stats stagger-children" style="background:transparent; border:none; box-shadow:none; padding:0;">
+        <div class="stat-card" style="display:flex; flex-direction:column; gap:8px; padding:20px; border-radius:16px;">
+          <div class="stat-card-header" style="justify-content:flex-start; gap:12px; margin-bottom:4px;">
+            <div class="stat-card-icon primary" style="width:48px; height:48px; border-radius:12px; background:rgba(59,130,246,0.1); color:#3b82f6;">${icon('trendingUp', 24)}</div>
+            <span class="stat-card-label" style="font-size:14px; text-transform:none; font-weight:600; color:var(--text-secondary); letter-spacing:normal;">Demonstrativo</span>
           </div>
-          <div class="stat-card-value">${trips.length}</div>
+          <div class="stat-card-value" style="font-size:28px; line-height:1.2;">${formatCurrency(totalBudget - totalSpent, currency)}</div>
+          <div class="stat-card-change ${totalBudget - totalSpent >= 0 ? 'up' : 'down'}">Saldo atual disponível</div>
+        </div>
+
+        <div class="stat-card" style="display:flex; flex-direction:column; gap:8px; padding:20px; border-radius:16px;">
+          <div class="stat-card-header" style="justify-content:flex-start; gap:12px; margin-bottom:4px;">
+            <div class="stat-card-icon success" style="width:48px; height:48px; border-radius:12px; background:rgba(16,185,129,0.1); color:#10b981;">${icon('dashboard', 24)}</div>
+            <span class="stat-card-label" style="font-size:14px; text-transform:none; font-weight:600; color:var(--text-secondary); letter-spacing:normal;">Total de viagens</span>
+          </div>
+          <div class="stat-card-value" style="font-size:28px; line-height:1.2;">${trips.length}</div>
           <div class="stat-card-change up">${activeTrips.length} em andamento</div>
         </div>
 
-        <div class="stat-card">
-          <div class="stat-card-header">
-            <span class="stat-card-label">Investimento Total</span>
-            <div class="stat-card-icon success">${icon('wallet', 20)}</div>
+        <div class="stat-card" style="display:flex; flex-direction:column; gap:8px; padding:20px; border-radius:16px;">
+          <div class="stat-card-header" style="justify-content:flex-start; gap:12px; margin-bottom:4px;">
+            <div class="stat-card-icon warning" style="width:48px; height:48px; border-radius:12px; background:rgba(245,158,11,0.1); color:#f59e0b;">${icon('finances', 24)}</div>
+            <span class="stat-card-label" style="font-size:14px; text-transform:none; font-weight:600; color:var(--text-secondary); letter-spacing:normal;">Investimento total</span>
           </div>
-          <div class="stat-card-value">${formatCurrency(totalBudget, currency)}</div>
+          <div class="stat-card-value" style="font-size:28px; line-height:1.2;">${formatCurrency(totalBudget, currency)}</div>
           <div class="stat-card-change down">${formatCurrency(totalSpent, currency)} gastos</div>
-        </div>
-
-        <div class="stat-card">
-          <div class="stat-card-header">
-            <span class="stat-card-label">Países Visitados</span>
-            <div class="stat-card-icon warning">${icon('globe', 20)}</div>
-          </div>
-          <div class="stat-card-value">${visitedCountries.size || 0}</div>
-          <div class="stat-card-change up">Pelo mundo</div>
         </div>
       </div>
 

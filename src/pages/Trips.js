@@ -143,12 +143,32 @@ export async function renderTrips() {
   document.querySelectorAll('.btn-confirm-trip').forEach(btn => {
     btn.addEventListener('click', async (e) => {
       e.stopPropagation();
+      const originalText = btn.innerHTML;
+      
       try {
+        // Validação básica
+        if (!btn.dataset.id) throw new Error('ID da viagem não encontrado');
+
+        // Loading state
+        btn.innerHTML = `${icon('loader', 14)} Confirmando...`;
+        btn.disabled = true;
+        btn.style.opacity = '0.7';
+        btn.style.cursor = 'not-allowed';
+
+        // Atualização via Supabase
         await dataService.updateTrip(btn.dataset.id, { manual_status: 'confirmed' });
-        toast.success('Viagem confirmada!');
-        renderTrips();
+        
+        toast.success('Viagem confirmada com sucesso!');
+        renderTrips(); // Recarrega a tela
       } catch (err) {
-        toast.error('Erro ao confirmar viagem');
+        console.error('Erro ao confirmar viagem:', err);
+        toast.error('Erro ao confirmar viagem: ' + (err.message || 'Tente novamente'));
+        
+        // Remove loading state on error
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+        btn.style.opacity = '1';
+        btn.style.cursor = 'pointer';
       }
     });
   });
