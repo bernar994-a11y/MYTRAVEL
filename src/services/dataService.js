@@ -103,11 +103,13 @@ class DataService {
       .from('trips')
       .update(tripData)
       .eq('id', id)
-      .select()
-      .single();
+      .select();
 
     if (error) throw error;
-    return data;
+    if (!data || data.length === 0) {
+      throw new Error('Você não tem permissão de dono para alterar esta viagem.');
+    }
+    return data[0];
   }
 
   /**
